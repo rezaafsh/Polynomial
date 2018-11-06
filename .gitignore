@@ -1,32 +1,234 @@
-# Prerequisites
-*.d
+// jomle ha 4.cpp : Defines the entry point for the console application.
+//
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+#include "stdafx.h"
+#include<conio.h>
+#include<vector>
+#include<iostream>
+#include<Windows.h>
+using namespace std;
+void gotoxy(int x, int y)
+{
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (INVALID_HANDLE_VALUE != hConsole)
+	{
+		COORD pos = { x, y };
+		SetConsoleCursorPosition(hConsole, pos);
+	}
+}
+class Polynomial
+{
 
-# Precompiled Headers
-*.gch
-*.pch
+private:
+	int coef[200];
+	int deg;
+public:
+	friend ostream& operator <<(ostream &x, Polynomial y);
+	Polynomial()
+	{
+		for (int i = 0; i <200; i++)
+		{
+			coef[i]=0;
+		}
+	}
+	void set(int a, int b)
+	{
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+		coef[b] = a;
+		deg = degree();
+	}
 
-# Fortran module files
-*.mod
-*.smod
+	void set()
+	{
+		int c, a, b;
+		cout << "how many sentence you have?" << endl;
+		cin >> c;
+		for (int i = 0; i < c; i++)
+		{
+			cout << "enter coef & pow for " << "sentence " << i + 1 << ":";
+			cin >> a;
+			cin >> b;
+			coef[b] = a;
+			deg = degree();
+		}
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+	}
+	int degree()
+	{
+		int d = 0;
+		for (int i = 0; i <200; i++)
+			if (coef[i] != 0)
+				d = i;
+		return d;
+	}
 
-# Executables
-*.exe
-*.out
-*.app
+	int operator ()(int x)
+	{
+		int p = 0;
+		for (int i = deg; i >= 0; i--)
+			p = coef[i] + (x * p);
+		return p;
+	}
+	Polynomial operator *(Polynomial b)
+	{
+		Polynomial a = *this;
+		Polynomial c;
+		for (int i = 0; i <= a.deg; i++)
+			for (int j = 0; j <= b.deg; j++)
+				c.coef[i + j] += (a.coef[i] * b.coef[j]);
+		c.deg = c.degree();
+		return c;
+	}
+	Polynomial& operator --()
+	{
+		coef[0]--;
+
+		return *this;
+	}
+	Polynomial operator -(Polynomial b)
+	{
+		Polynomial a = *this;
+		Polynomial c;
+		for (int i = 0; i <= a.deg; i++)
+			c.coef[i] += a.coef[i];
+		for (int i = 0; i <= b.deg; i++)
+			c.coef[i] -= b.coef[i];
+		c.deg = c.degree();
+		return c;
+
+	}
+	int  operator [](int y)
+	{
+		return coef[y];
+	}
+	Polynomial operator +(Polynomial b)
+	{
+		Polynomial a = *this;
+		Polynomial c;
+		for (int i = 0; i <= a.deg; i++)
+			c.coef[i] += a.coef[i];
+		for (int i = 0; i <= b.deg; i++)
+			c.coef[i] += b.coef[i];
+		c.deg = c.degree();
+		return c;
+	}
+	Polynomial& operator ++()
+	{
+		coef[0]++;
+
+		return *this;
+	}
+};
+
+ostream& operator <<(ostream &x, Polynomial y)
+{
+	for (int i = 199 ; i >= 0; i--) {
+		if (y.coef[i] != 0)
+		{
+			if (y.coef[i]>0)
+			{
+				x <<"+" <<y.coef[i] << "x^" << i << " ";
+			}
+			else
+				x << y.coef[i] << "x^" << i << " ";
+		}
+	}
+
+	return x;
+}
+
+int main()
+{
+	system("color 75");
+	Polynomial a, b, c;
+	int menu;
+	gotoxy(25, 5);
+	cout << "<<Wellcome to the menu>>" << endl;
+	gotoxy(20, 11);
+	cout << "what do you want to do : ";
+	gotoxy(20, 12);
+	cout << "1 = get your polynomial and x and calcute" << endl;
+	gotoxy(20, 13);
+	cout << "2 = get your polynomials and show total" << endl;
+	gotoxy(20, 14);
+	cout << "3 = get your polynomials and minus them" << endl;
+	gotoxy(20, 15);
+	cout << "4 = get your polynomials and show mult" << endl;
+	gotoxy(20, 16);
+	cout << "5 = [ ] over loading :)" << endl;
+	gotoxy(20, 17);
+	cout << "6 = ++ over loading " << endl;
+	gotoxy(20, 18);
+	cout << "7 = -- over loading " << endl;
+	cin >> menu;
+	system("cls");
+	if (menu==1)
+	{
+		int k;
+		a.set();
+		cout << a<<endl;
+		cout << "enter x: ";
+		cin >> k;
+		cout << a(k);
+	}
+	if (menu==2)
+	{
+		a.set();
+		b.set();
+		c = a + b;
+		cout << "(" << a << ")" << "+" << "(" << b << ")" << "=" << c;
+	}
+	if (menu==3)
+	{
+		a.set();
+		cout << a << endl;
+		b.set();
+		cout << b << endl;
+		c = a - b;
+		cout << "(" << a << ")" << "-" << "(" << b << ")" << "=" << c;
+
+	}
+	if (menu==4)
+	{
+		a.set();
+		b.set();
+		c = a * b;
+		cout <<"("<<a<<")"<<"*"<<"("<<b<<")"<<"="<< c;
+	}
+	if (menu==5)
+	{
+		int k;
+		a.set();
+		cout << a << endl;
+		cout << "enter the degree of variable that you wanna to see the coefficient : ";
+		cin >> k;
+		cout << a[k];
+	}
+	if (menu == 6)
+	{
+		a.set();
+		cout << a<<endl;
+		++++a;
+		cout << "after operation = " << a;
+	}
+	if (menu == 7)
+	{
+		a.set();
+		cout << a<<endl;
+		--a;
+		cout << "after operation = " << a;
+	}
+
+	_getch();
+	system("cls");
+	gotoxy(30, 10);
+	cout << "are you wanna to continue : (0||1) ";
+	int cont;
+	cin >> cont;
+	if (cont)
+	{
+		main();
+		system("cls");
+	}
+	return 0;
+}
